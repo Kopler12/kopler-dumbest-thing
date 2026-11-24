@@ -41,6 +41,13 @@ def main() -> None:
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8") as f:
         f.write(line)
+    # Verify the write: read the file back and make sure the bytes on
+    # disk are exactly the validated line, so a silent partial write
+    # can never pass as a valid entry.
+    with open("/output/entry.txt", encoding="utf-8") as f:
+        written = f.read()
+    if written != line:
+        raise RuntimeError("entry.txt does not match the validated line")
 
 
 if __name__ == "__main__":
